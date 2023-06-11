@@ -33,6 +33,6 @@ class LoginUser(APIView):
 
 
 @login_required()
-def log_out(request):
+def logout_user(request):
     logout(request)
     return HttpResponseRedirect('/')
