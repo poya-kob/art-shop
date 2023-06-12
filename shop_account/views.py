@@ -1,3 +1,4 @@
+import json
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
@@ -18,11 +19,11 @@ UserModel: User = get_user_model()
 class LoginUser(APIView, UserNotLoggedInMixin):
 
     def post(self, request):
-        phone_number = self.request.data['phone_number']
+        mobile_number = self.request.data['mobile_number']
         next_url = self.request.POST.get('next', '/')
         otp = self.request.data['otp']
-        if otp_validator(otp, phone_number):
-            user = UserModel.objects.get(mobile_number__exact=phone_number)
+        if otp_validator(otp, mobile_number):
+            user = UserModel.objects.get(mobile_number__exact=mobile_number)
             login(request, user)
             return HttpResponseRedirect(redirect_to=next_url)
         return Response(_('phone or otp is not correct'), status=status.HTTP_400_BAD_REQUEST)
@@ -37,10 +38,12 @@ def logout_user(request):
 class RegisterUser(APIView, UserNotLoggedInMixin):
 
     def post(self, request):
-        serializer = RegisterUserSerializer(data=self.request.data.get('phone_number', False))
+        serializer = RegisterUserSerializer(data=self.request.data)
         if serializer.is_valid():
             serializer.save()
-            return Response({'message': 'user created successfully',
-                             'user': serializer.data}, status=status.HTTP_201_CREATED)
-        return Response({'error': _('not valid data or phone number registered before!')},
+            if not serializer.errors:
+                return Response({'message': 'user created successfully',
+                                 'user': serializer.data}, status=status.HTTP_201_CREATED)
+
+        return Response({'error': _('not valid data or mobile number registered before!')},
                         status=status.HTTP_400_BAD_REQUEST)
