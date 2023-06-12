@@ -8,18 +8,14 @@ from django.utils.translation import gettext_lazy as _
 from django.http.response import HttpResponseRedirect
 
 from .models import User
-
 from utils.validators import otp_validator
+from utils.mixins import UserNotLoggedInMixin
+from .serializers import RegisterUserSerializer
 
 UserModel: User = get_user_model()
 
 
-class LoginUser(APIView):
-
-    def dispatch(self, request, *args, **kwargs):
-        if self.request.user.is_authenticated:
-            return HttpResponseRedirect(self.request.DATA.get('next', '/'))
-        return super().dispatch(request, *args, **kwargs)
+class LoginUser(APIView, UserNotLoggedInMixin):
 
     def post(self, request):
         phone_number = self.request.data['phone_number']
@@ -36,3 +32,15 @@ class LoginUser(APIView):
 def logout_user(request):
     logout(request)
     return HttpResponseRedirect('/')
+
+
+class RegisterUser(APIView, UserNotLoggedInMixin):
+
+    def post(self, request):
+        serializer = RegisterUserSerializer(data=self.request.data.get('phone_number', False))
+        if serializer.is_valid():
+            serializer.save()
+            return Response({'message': 'user created successfully',
+                             'user': serializer.data}, status=status.HTTP_201_CREATED)
+        return Response({'error': _('not valid data or phone number registered before!')},
+                        status=status.HTTP_400_BAD_REQUEST)
