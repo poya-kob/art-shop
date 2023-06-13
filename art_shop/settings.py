@@ -157,3 +157,7 @@ CELERY_ACCEPT_CONTENT = ['application/json']
 CELERY_TASK_SERIALIZER = 'json'
 CELERY_RESULT_SERIALIZER = 'json'
 CELERY_TIMEZONE = 'Asia/Tehran'
+
+# sms
+SMS_API = os.environ.get('SMS_API')
+SMS_NUMBER = os.environ.get('SMS_NUMBER')
