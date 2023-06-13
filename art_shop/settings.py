@@ -30,8 +30,6 @@ SECRET_KEY = os.environ.get('SECRET_KEY')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = bool(int(os.environ.get('DEBUG')))
 
-AUTH_USER_MODEL = 'shop_account.User'
-
 ALLOWED_HOSTS = []
 
 # Application definition
@@ -44,6 +42,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rest_framework',
+    'rest_framework.authtoken',
     # my apps
     'shop_account',
 ]
@@ -58,6 +57,17 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework.authentication.BasicAuthentication',
+        'rest_framework.authentication.SessionAuthentication',
+    ]
+    #     # Use Django's standard `django.contrib.auth` permissions,
+    #     # or allow read-only access for unauthenticated users.
+    #     'DEFAULT_PERMISSION_CLASSES': [
+    #         'rest_framework.permissions.DjangoModelPermissionsOrAnonReadOnly'
+    #     ]
+}
 ROOT_URLCONF = 'art_shop.urls'
 
 TEMPLATES = [
@@ -117,6 +127,7 @@ AUTH_PASSWORD_VALIDATORS = [
         'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
     },
 ]
+AUTH_USER_MODEL = 'shop_account.User'
 
 # Internationalization
 # https://docs.djangoproject.com/en/4.2/topics/i18n/
@@ -138,3 +149,11 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+# Celery
+CELERY_BROKER_URL = os.environ.get('CELERY_BROKER_URL').strip()
+CELERY_RESULT_BACKEND = os.environ.get('CELERY_RESULT_BACKEND').strip()
+CELERY_ACCEPT_CONTENT = ['application/json']
+CELERY_TASK_SERIALIZER = 'json'
+CELERY_RESULT_SERIALIZER = 'json'
+CELERY_TIMEZONE = 'Asia/Tehran'

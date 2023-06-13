@@ -26,10 +26,11 @@ class User(django_auth_models.AbstractUser):
         verbose_name = _("User")
         verbose_name_plural = _("Users")
 
-    def set_otp(self) -> None:
+    def set_otp(self) -> str:
         otp = str(Random().randint(10000, 99999))
         cache.set(self.mobile_number, otp, timeout=TIME_OUT)
         send_otp.delay(otp, self.mobile_number)
+        return otp
 
     def __str__(self):
         return f"{self.mobile_number}"
