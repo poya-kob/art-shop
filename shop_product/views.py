@@ -1,3 +1,7 @@
-from django.shortcuts import render
+from rest_framework.viewsets import ModelViewSet
 
-# Create your views here.
+from .models import Products
+
+
+class ProductsView(ModelViewSet):
+    queryset = Products.objects.get_active_products()
