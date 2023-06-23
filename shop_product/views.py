@@ -18,6 +18,7 @@ class ProductsViewSet(ModelViewSet):
 
 class CategoryViewSet(ModelViewSet):
     serializer_class = CategoryCreateSerializer
+    lookup_field = 'slug'
 
     def get_queryset(self):
         if self.request.user.is_superuser:

@@ -6,6 +6,7 @@ from django_jalali.db import models as jmodels
 
 class Categories(models.Model):
     name = models.CharField(max_length=150, verbose_name=_("name"), unique=True)
+    slug = models.SlugField(max_length=300, verbose_name=_("slug"),unique=True)
     parent = models.ForeignKey('self', on_delete=models.SET_NULL, null=True, blank=True, verbose_name=_('parent'))
     created_time = jmodels.jDateTimeField(verbose_name=_("created time"), auto_now_add=True)
     active = models.BooleanField(default=False, verbose_name=_("active/inactive"))
